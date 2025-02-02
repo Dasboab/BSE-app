@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Transthoracic Echo (BSE Curriculum) Quiz</title>
+  <style>
+    body {
+      margin: 0; 
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #333;
+    }
+    header {
+      background: #00936b; /* BSE-like green */
+      color: #fff;
+      padding: 16px;
+      text-align: center;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto 50px;
+      padding: 0 15px;
+    }
+    .hidden {
+      display: none !important;
+    }
+    h1, h2, h3 {
+      margin: 0;
+    }
+    button {
+      background: #00936b;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 8px 0;
+    }
+    button:hover {
+      background: #007652;
+    }
+    .link-btn {
+      background: #fff;
+      color: #00936b;
+      border: 2px solid #00936b;
+      margin: 5px 0;
+    }
+    .link-btn:hover {
+      background: #00936b;
+      color: #fff;
+    }
+    .top-intro, .menu-screen, .login-screen, .landing-screen, .pay-screen {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .floating-scoreboard {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: #f8fff9;
+      border: 2px solid #00936b;
+      padding: 8px;
+      border-radius: 6px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+      font-size: 0.9em;
+      z-index: 999;
+    }
+    .floating-scoreboard h4 {
+      margin: 0 0 6px;
+      color: #00936b;
+      font-size: 1em;
+    }
+    label {
+      display: inline-block;
+      margin-right: 15px;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .score-info {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .question-box {
+      background: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .reset-btn {
+      background: #ff4444;
+      border-color: #c33;
+    }
+    .reset-btn:hover {
+      background: #cc0000;
+    }
+    .progress-bar {
+      width: 200px;
+      height: 12px;
+      background: #ddd;
+      border-radius: 6px;
+      margin: 5px auto;
+      position: relative;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #00936b;
+      border-radius: 6px;
+      width: 0%;
+    }
+    /* input fields */
+    input[type=text], input[type=password], input[type=date], input[type=tel], input[type=email] {
+      padding: 6px; margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>My Echocardiography Curriculum</h1>
+</header>
+
+<div id="scoreboard" class="floating-scoreboard hidden">
+  <h4>Overall Progress</h4>
+  <div id="scoreOverall">Answered: 0 / 0 correct (0.0%)</div>
+  <hr/>
+  <h4 id="currentSetLabel">Current Set</h4>
+  <div id="scoreSet">0 / 0 correct (0.0%)</div>
+</div>
+
+<div class="container">
+
+  <!-- ============ LANDING SCREEN ============ -->
+  <div id="landingScreen">
+    <h2>Welcome to the Echo Quiz Portal</h2>
+    <p>Subscribe or log in to access specialized curriculum question sets.</p>
+    <button class="link-btn" onclick="gotoPayScreen()">Subscribe / Place Order</button>
+    <button class="link-btn" onclick="gotoLogin()">Already Subscribed? Log In</button>
+  </div>
+
+  <!-- ============ PAYMENT / DATA ENTRY SCREEN ============ -->
+  <div id="payScreen" class="pay-screen hidden">
+    <h2>Enter Details / Place Order</h2>
+    <p>Complete the form to generate your user ID and password.</p>
+    <div style="text-align:left; max-width:400px; margin:0 auto;">
+      <label>Full Name:<br/>
+        <input type="text" id="fullName" placeholder="John Smith"/>
+      </label><br/>
+      <label>Date of Birth:<br/>
+        <input type="date" id="dob"/>
+      </label><br/>
+      <label>Mobile # (+country code):<br/>
+        <input type="tel" id="phone" placeholder="+44 1234567890"/>
+      </label><br/>
+      <label>Profession Track:<br/>
+        <select id="professionTrack">
+          <option>Physician</option>
+          <option>Sonographer</option>
+          <option>Nursing</option>
+          <option>Other</option>
+        </select>
+      </label><br/>
+      <label>Email Address:<br/>
+        <input type="email" id="email" placeholder="example@domain.com"/>
+      </label><br/>
+      <label>
+        <input type="checkbox" id="gdprCheck" checked/>
+        Unselect this box if you <em>do not</em> want to be contacted with offers or by third parties
+      </label>
+    </div>
+    <p style="margin-top:15px;">Select payment method:</p>
+    <button style="background:#555;" onclick="mockApplePay()">Apple Pay</button>
+    <button style="background:#333;" onclick="mockPayPal()">PayPal</button>
+  </div>
+
+  <!-- ============ LOGIN SCREEN ============ -->
+  <div id="loginScreen" class="login-screen hidden">
+    <h2>Login</h2>
+    <p>Enter your user ID / password (demo only).</p>
+    <input type="text" id="loginUserID" placeholder="User ID"/><br/>
+    <input type="password" id="loginPassword" placeholder="Password"/><br/>
+    <button onclick="login()">Log In</button>
+    <p>
+      <a href="#" onclick="forgotCredentials()">Forgot username/password?</a>
+    </p>
+  </div>
+
+  <!-- ============ MENU SCREEN ============ -->
+  <div id="menuScreen" class="menu-screen hidden">
+    <h2>Main Menu</h2>
+    <p>Select a set to begin or continue. The progress bar indicates completion %.</p>
+    <div id="setsList" style="text-align:left; margin:0 auto; max-width:300px;">
+      <!-- We'll populate sets vertically with progress bars -->
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+      <button class="reset-btn" onclick="resetProgress()">Reset All Progress</button>
+    </div>
+  </div>
+
+  <!-- ============ QUIZ SCREEN ============ -->
+  <div id="quizScreen" class="hidden">
+    <h2 id="quizTitle">Set Title</h2>
+    <div id="questionBox" class="question-box"></div>
+    <div class="nav-buttons">
+      <button id="prevBtn" onclick="prevQuestion()">Previous Question</button>
+      <button onclick="exitToMenu()">Exit to Menu</button>
+      <button id="nextBtn" onclick="nextQuestion()">Next Question</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/***********************************************************************
+ * MOCK BACKEND & GLOBAL STATE
+ ***********************************************************************/
+let isSubscribed = false;
+let userID = null;
+let userPassword = null;
+let isLoggedIn = false;
+
+// store user name + basic fields if needed.
+let storedName = "";
+let storedDob = "";
+let storedPhone = "";
+let storedProfession = "";
+let storedEmail = "";
+
+// Example sets data with 50 questions each, referencing BSE curriculum
+const setsData = {
+  'Set1': {
+    title: "Set 1: Basic Physics",
+    questions: [
+      // 50 questions
+      {
+        text: "1. The typical speed of ultrasound in soft tissue is approximately 1540 m/s.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is a standard average value used in ultrasound physics."
+      },
+      {
+        text: "2. The speed of sound in bone is slower than in soft tissue.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Bone has a higher propagation speed (over 3000 m/s) than soft tissue."
+      },
+      {
+        text: "3. Frequency (f) is inversely related to wavelength (λ) given a constant propagation speed (c).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. λ = c / f, so higher frequency yields a shorter wavelength."
+      },
+      {
+        text: "4. The amplitude of an ultrasound wave is independent of the transmitting power.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Amplitude is related to the initial power output among other factors."
+      },
+      {
+        text: "5. Ultrasound attenuation generally increases as frequency increases.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Higher frequency waves attenuate more readily in tissues."
+      },
+      {
+        text: "6. The near field (Fresnel zone) is the region close to the transducer where the beam gradually converges.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. The near field is where beam diameter remains narrow and focusing is most effective."
+      },
+      {
+        text: "7. The far field (Fraunhofer zone) is where the beam diverges minimally.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. In the far field, the beam diverges more significantly compared to the near field."
+      },
+      {
+        text: "8. Lateral resolution is primarily determined by the spatial pulse length (SPL).",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Lateral resolution depends on beam width, whereas SPL affects axial resolution."
+      },
+      {
+        text: "9. Axial resolution improves with a reduction in spatial pulse length.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. A shorter pulse (thus lower SPL) improves the ability to distinguish reflectors along the beam axis."
+      },
+      {
+        text: "10. The use of gel between the transducer and skin helps eliminate the air interface and improve sound transmission.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Gel prevents reflection at the skin-transducer boundary."
+      },
+      {
+        text: "11. Snell’s law relates the angle of incidence to the angle of refraction at a boundary with different propagation speeds.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Snell’s law governs refraction of an ultrasound beam crossing media with different speeds."
+      },
+      {
+        text: "12. Specular reflection occurs when the ultrasound beam strikes a small, rough interface.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Specular reflection occurs at large, smooth boundaries; scattering occurs at rough or small reflectors."
+      },
+      {
+        text: "13. The piezoelectric effect is the conversion of mechanical pressure into electrical voltage (and vice versa).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Ultrasound transducers use crystals with this property to generate and receive sound waves."
+      },
+      {
+        text: "14. The bandwidth of a transducer refers to the range of frequencies emitted above 20 MHz in diagnostic echo.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Diagnostic echo typically spans ~2–15 MHz; bandwidth is the range of frequencies around the center frequency, not necessarily above 20 MHz."
+      },
+      {
+        text: "15. If you increase the frequency, the penetration of ultrasound in tissue generally decreases.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Higher frequency yields higher attenuation, reducing depth of penetration."
+      },
+      {
+        text: "16. Ultrasonic intensity is the power per unit area of the beam.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Intensity is measured in watts/cm^2 or similar units."
+      },
+      {
+        text: "17. Decibel (dB) scale in ultrasound compares the power level to a reference using a linear scale.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. dB scale is logarithmic, not linear."
+      },
+      {
+        text: "18. Side lobes are additional beams of lower intensity outside the main ultrasound beam.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Side lobes can cause artifacts if they intercept strong reflectors."
+      },
+      {
+        text: "19. Partial volume artifact relates to the finite thickness of the ultrasound beam (elevation dimension).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Also known as slice-thickness artifact, it can fill in anechoic structures."
+      },
+      {
+        text: "20. The frame rate in 2D imaging is independent of imaging depth.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Deeper imaging or wider sectors reduce frame rate because more time is required per scan line."
+      },
+      {
+        text: "21. Harmonic imaging transmits at one frequency but listens at multiples of that frequency.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This can reduce near-field artifacts and improve resolution."
+      },
+      {
+        text: "22. Broadband transducers can operate effectively at multiple centre frequencies, allowing frequency selection.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Modern probes often allow you to pick a lower or higher frequency within a range."
+      },
+      {
+        text: "23. M-mode (motion mode) has lower temporal resolution compared to 2D imaging.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. M-mode generally has very high temporal resolution compared to standard 2D."
+      },
+      {
+        text: "24. The mechanical index (MI) is an indicator of the likelihood of cavitation in tissues.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. MI depends on peak negative pressure and the transmit frequency."
+      },
+      {
+        text: "25. Time Gain Compensation (TGC) allows selective amplification of echoes at different depths to create a uniform image.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. TGC compensates for depth-related attenuation."
+      },
+      {
+        text: "26. If the pulse repetition frequency (PRF) is decreased, the maximum imaging depth is reduced.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Lower PRF allows greater imaging depth before the next pulse is sent."
+      },
+      {
+        text: "27. Spatial compounding involves transmitting from multiple angles to reduce speckle and artifact.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Compound imaging can improve image clarity by averaging frames from different angles."
+      },
+      {
+        text: "28. Axial resolution depends primarily on beam width in the lateral dimension.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Axial resolution depends on the SPL along the beam axis; beam width affects lateral resolution."
+      },
+      {
+        text: "29. Increasing output power is always safer for the patient than increasing receive gain.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Increasing output power raises potential bio-effects; ALARA recommends optimizing receive gain first."
+      },
+      {
+        text: "30. Reverberation artifact can occur when sound bounces repeatedly between two reflectors.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This may create multiple equally spaced echo lines."
+      },
+      {
+        text: "31. Multi-beam (parallel processing) can increase frame rate by receiving echoes along multiple lines simultaneously.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Some systems use parallel beamforming to enhance frame rate."
+      },
+      {
+        text: "32. In ultrasound, the wavelength in soft tissue is usually in the range of centimetres.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Typical wavelengths in soft tissue are in the range of tenths of a millimetre to a millimetre, depending on frequency."
+      },
+      {
+        text: "33. Ultrasound transducers must both transmit and receive sound, so they must be carefully damped to have broad bandwidth.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Damping ensures a short pulse and a broader bandwidth for imaging."
+      },
+      {
+        text: "34. The greater the acoustic impedance mismatch at a boundary, the more reflection occurs.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Acoustic impedance mismatch influences reflection coefficient."
+      },
+      {
+        text: "35. Compression reduces the dynamic range of displayed signals, making weaker echoes more visible.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Compression reduces the range so differences are more pronounced, but it can hide some weaker signals if set incorrectly."
+      },
+      {
+        text: "36. A longer pulse duration provides better axial resolution.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Shorter pulse duration (hence shorter SPL) yields better axial resolution."
+      },
+      {
+        text: "37. In fundamental imaging, the transmitted and received frequencies are the same.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Harmonic imaging transmits at one frequency but listens at higher harmonics."
+      },
+      {
+        text: "38. Electronic beam steering is only possible with mechanical transducers.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Electronic beam steering is used with phased arrays, not purely mechanical transducers."
+      },
+      {
+        text: "39. Spatial resolution includes axial, lateral, and elevational components.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. These three dimensions define how well separate reflectors can be distinguished in space."
+      },
+      {
+        text: "40. A sector (phased) array transducer typically displays a trapezoidal or sector-shaped field of view.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Phased arrays often produce a pie-slice or sector field for cardiac imaging."
+      },
+      {
+        text: "41. A high Q-factor transducer usually has a wide bandwidth.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. High Q-factor = narrower bandwidth; modern imaging transducers strive for low Q-factor and broad bandwidth."
+      },
+      {
+        text: "42. The frequency range for adult transthoracic echocardiography typically spans about 2–4 MHz for standard imaging.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This range balances resolution and penetration in adult cardiac exams."
+      },
+      {
+        text: "43. The beam intensity is uniform across the beam profile.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Intensity is typically highest at the center and tapers off toward the edges."
+      },
+      {
+        text: "44. Side lobes can create duplicate echoes of structures lateral to the main beam axis.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. If side lobes encounter strong reflectors, they can produce misleading echoes."
+      },
+      {
+        text: "45. Elevational resolution (slice-thickness) can cause 'fill-in' of anechoic chambers if it is poor.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. The finite thickness of the beam can include off-axis echoes."
+      },
+      {
+        text: "46. Mechanical transducers often rotate or oscillate a crystal to create an image sector.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Early mechanical scanners physically moved the crystal for scanning."
+      },
+      {
+        text: "47. Real-time 3D (or 4D) imaging uses matrix array probes with thousands of elements.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. These probes electronically steer in two dimensions for volume data."
+      },
+      {
+        text: "48. The duty factor of a typical pulsed ultrasound system in echocardiography is close to 100%.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Duty factor is typically well under 1% for diagnostic echo (pulsed system)."
+      },
+      {
+        text: "49. Increasing the number of focal zones in 2D imaging generally decreases the frame rate.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Multiple focal zones require multiple pulses per scan line, reducing overall frame rate."
+      },
+      {
+        text: "50. Temporal resolution in echocardiography is crucial for assessing fast cardiac motions, which is why higher frame rates are desirable.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Better temporal resolution aids in evaluating rapid events like valve motion."
+      }
+    ]
+  },
+
+  'Set2': {
+    title: "Set 2: Advanced Doppler",
+    questions: [
+      // 50 questions referencing advanced Doppler physics, colour flow, spectral Doppler, aliasing, etc.
+      {
+        text: "1. The Doppler effect describes the change in frequency of echoes from moving reflectors such as red blood cells.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is fundamental to velocity measurements in echocardiography."
+      },
+      {
+        text: "2. Continuous-Wave Doppler can measure any velocity without aliasing but cannot determine the depth of origin of the signal.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. CW has no range resolution, so it sums velocities along its entire beam."
+      },
+      {
+        text: "3. Nyquist limit = half the pulse repetition frequency (PRF).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. If the Doppler shift exceeds PRF/2, aliasing occurs."
+      },
+      {
+        text: "4. Aliasing never occurs in pulsed-wave Doppler if the sample volume is placed at shallow depths.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Aliasing can still occur if velocities exceed the Nyquist limit, regardless of depth."
+      },
+      {
+        text: "5. The simplified Bernoulli equation often used in echocardiography is 4 × (velocity)².",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This provides an approximate pressure gradient from velocity."
+      },
+      {
+        text: "6. Colour flow imaging uses multiple pulsed sample volumes along each line to estimate blood flow velocities.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Colour flow is essentially multi-gate PW Doppler processed via autocorrelation."
+      },
+      {
+        text: "7. Velocity scale adjustments in colour Doppler can help reduce aliasing but do not affect frame rate.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Changing velocity scale often changes PRF, which can influence frame rate."
+      },
+      {
+        text: "8. Variance mode in colour Doppler adds a green overlay to indicate turbulence or wider velocity spread.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Variance mapping highlights disturbed or turbulent flow."
+      },
+      {
+        text: "9. High Pulse Repetition Frequency (HPRF) Doppler combines features of PW and CW by using multiple sample gates.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. HPRF extends the Nyquist limit but introduces potential range ambiguity."
+      },
+      {
+        text: "10. Angle correction in Doppler measurements is unimportant if the beam is within 90° of flow direction.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Ideally, the beam should be parallel (<20° off) to flow for accurate velocity measurement."
+      },
+      {
+        text: "11. The Doppler shift frequency is in the audible range (~20 Hz to 20 kHz) for typical cardiac velocities.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. That is why we can hear Doppler signals via the system’s audio output."
+      },
+      {
+        text: "12. The Doppler equation: fD = (2 × f0 × v × cosθ) / c, where f0 is transmitted frequency and c is speed of sound.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This fundamental equation calculates the Doppler shift from velocity and angle."
+      },
+      {
+        text: "13. In continuous-wave Doppler, range discrimination is excellent, but maximum velocity is limited by aliasing.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. CW has unlimited velocity range but no range discrimination."
+      },
+      {
+        text: "14. Power Doppler encodes the amplitude (strength) of Doppler signals rather than velocity or direction.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Power Doppler is more sensitive to low flow but lacks directional info."
+      },
+      {
+        text: "15. Pulsed-wave Tissue Doppler Imaging (TDI) is specifically configured for higher velocities than standard blood flow Doppler.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. TDI targets lower velocities of myocardium, so it often uses filters to exclude high RBC velocities."
+      },
+      {
+        text: "16. E/A ratio from mitral inflow Doppler is used to assess diastolic function.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Early (E) and atrial (A) wave velocities help classify diastolic function."
+      },
+      {
+        text: "17. Aliasing can be reduced by increasing the PRF or lowering the transducer frequency.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. These methods raise the Nyquist limit, mitigating aliasing."
+      },
+      {
+        text: "18. Doppler angle error has minimal effect once beam alignment exceeds 80° from flow direction.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Large angles near 90° drastically reduce the measured velocity (cos90°=0)."
+      },
+      {
+        text: "19. Spectral broadening on PW Doppler always indicates turbulent flow.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Spectral broadening can also result from large sample volume or technical factors."
+      },
+      {
+        text: "20. The modified Bernoulli equation (4 × V²) is an approximation ignoring viscous and inertial energy losses.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. In echo, it’s typically accurate for high flow velocities despite some simplifications."
+      },
+      {
+        text: "21. CW Doppler is essential for measuring high velocities in aortic stenosis and mitral regurgitation.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. CW avoids aliasing at high velocities but lacks depth resolution."
+      },
+      {
+        text: "22. The colour map in colour Doppler indicates only velocity direction, not magnitude.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Basic colour maps show direction and mean velocity; brightness can reflect velocity magnitude."
+      },
+      {
+        text: "23. Baseline shift can help reduce apparent aliasing in spectral Doppler displays.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Shifting the baseline can un-wrap some signals that appear above or below the baseline."
+      },
+      {
+        text: "24. The pulse wave sample volume length has no effect on spectral Doppler broadening.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Larger sample volumes can increase spectral broadening due to wider range of velocities included."
+      },
+      {
+        text: "25. Doppler Tissue Imaging (DTI) can quantify both systolic and diastolic myocardial velocities at the annulus.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. TDI (or DTI) is used for e’, a’, and s’ wave measurements in diastolic and systolic function assessment."
+      },
+      {
+        text: "26. The 'walk-through' or 'scan-through' technique in colour flow adjusts colour sector angle during scanning.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This can systematically check colour flow in multiple planes."
+      },
+      {
+        text: "27. In advanced Doppler, the Coanda effect refers to a jet clinging to a curved surface, as seen in eccentric regurgitation jets.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This can mask jet severity if the jet is hugging the wall."
+      },
+      {
+        text: "28. Aliasing never occurs in colour Doppler if the operator sets a sufficiently high velocity scale.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Extremely high velocities can still exceed the Nyquist limit."
+      },
+      {
+        text: "29. The colour Doppler frame rate is unaffected by sector width and colour packet size.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. A wider colour sector or larger packet size lowers the frame rate."
+      },
+      {
+        text: "30. Velocity variance mapping can help identify turbulent flow by adding a green overlay.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is sometimes used to highlight regurgitant jets or abnormal flow."
+      },
+      {
+        text: "31. Laminar flow has a narrow spectral bandwidth on PW Doppler, while turbulent flow has a broad, filled-in spectrum.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is typical in normal vs. turbulent flow patterns."
+      },
+      {
+        text: "32. Doppler shift frequency is always above the audible range in cardiovascular imaging.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Many Doppler shifts fall within audible range (hundreds to thousands of Hz)."
+      },
+      {
+        text: "33. The ratio of inflow velocity time integral (VTI) to outflow VTI can be used as a dimensionless index in aortic stenosis.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. The dimensionless index = LVOT VTI / Aortic VTI."
+      },
+      {
+        text: "34. Pulse repetition frequency must be high enough to sample returning echoes before the next pulse is sent.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. If PRF is too low for the selected depth, range ambiguity can occur."
+      },
+      {
+        text: "35. The Doppler angle should ideally be perpendicular to blood flow for maximum velocity accuracy.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Doppler angle should be as parallel as possible (close to 0°) for accurate measurements."
+      },
+      {
+        text: "36. A high colour scale may mask low-velocity flows, making them appear absent on colour Doppler.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. If scale is too high, subtle flows might not register."
+      },
+      {
+        text: "37. Respiration can change the Doppler velocities in the hepatic veins and inferior vena cava.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is utilised in assessing right heart haemodynamics."
+      },
+      {
+        text: "38. CW Doppler is rarely used in echocardiography for valvular assessment.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. CW is frequently used for measuring high velocities in valves, e.g. aortic or mitral regurgitation."
+      },
+      {
+        text: "39. The vertical axis in spectral Doppler typically represents time, and the horizontal axis represents velocity.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Conventionally, horizontal is time, vertical is velocity (or Doppler shift)."
+      },
+      {
+        text: "40. In spectral Doppler, brighter intensities represent stronger echo signals from RBCs (red blood cells).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. The brightness (amplitude) indicates signal strength."
+      },
+      {
+        text: "41. High pulse repetition frequency (HPRF) Doppler can detect medium-to-high velocities but can create multiple sample volumes with potential ambiguity.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. HPRF is a compromise between PW and CW with partial range ambiguity."
+      },
+      {
+        text: "42. The E/e’ ratio uses early diastolic mitral inflow velocity (E) and early diastolic tissue velocity at the mitral annulus (e’) to estimate left ventricular filling pressures.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. E/e’ is commonly used for diastolic assessment in echo."
+      },
+      {
+        text: "43. Interrogating pulmonary venous flow with PW Doppler can provide insight into left atrial pressures and diastolic function.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. S, D, and AR waves help evaluate filling dynamics."
+      },
+      {
+        text: "44. Aliasing in colour Doppler never affects display of regurgitant jets.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Aliasing can distort or wrap around high-velocity regurgitant jets on colour maps."
+      },
+      {
+        text: "45. Tissue Doppler Imaging is the same as colour flow Doppler in terms of scale and filter settings.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. TDI uses different filter settings optimised for low velocities of the myocardium."
+      },
+      {
+        text: "46. The peak velocity of tricuspid regurgitation (TR) jet can be used to estimate right ventricular systolic pressure.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. With an estimate of right atrial pressure, RVSP can be calculated from the TR peak velocity."
+      },
+      {
+        text: "47. In colour M-mode, the slope of the colour-flow propagation can help evaluate diastolic function (Vp).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Colour M-mode propagation velocity can correlate with diastolic function."
+      },
+      {
+        text: "48. Beam-flow angle > 70° is acceptable for accurate velocity measurements in standard Doppler.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Errors become large if angle is significantly off parallel. Ideal is <20° if possible."
+      },
+      {
+        text: "49. Turbulent flow in a stenotic or regurgitant valve can produce a filled-in, high intensity spectral envelope with variance in colour flow imaging.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Turbulence broadens the spectral envelope and shows variance in colour."
+      },
+      {
+        text: "50. Adjusting the wall filter can help remove low-frequency clutter from vessel walls or myocardium when assessing blood flow.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. A properly set wall filter can eliminate unwanted low-velocity signals."
+      }
+    ]
+  },
+
+  'Set3': {
+    title: "Set 3: Instrumentation & Safety",
+    questions: [
+      // 50 questions referencing machine controls, potential bioeffects, TDI instrumentation, safety indexes, infection control, etc.
+      {
+        text: "1. The Thermal Index (TI) approximates the potential temperature rise in tissue due to ultrasound.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. TI is a rough guide to possible heating."
+      },
+      {
+        text: "2. The Mechanical Index (MI) reflects the risk of inertial cavitation in tissues.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. MI depends on peak negative pressure and frequency."
+      },
+      {
+        text: "3. ALARA stands for 'As Low As Reasonably Achievable' regarding ultrasound exposure.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This principle aims to minimise potential bioeffects."
+      },
+      {
+        text: "4. If the user wants a brighter image, increasing output power is safer than increasing overall gain.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. BSE guidelines advise adjusting gain rather than power to reduce patient exposure."
+      },
+      {
+        text: "5. The operator is required to ensure the ultrasound probe is fully decontaminated between patients to reduce infection risk.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Proper cleaning/disinfection is crucial for infection control."
+      },
+      {
+        text: "6. Using maximum colour gain does not affect the potential for overestimation of regurgitant jets.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Excess colour gain can cause 'colour bleed' and artificially enlarge jets."
+      },
+      {
+        text: "7. A transoesophageal echocardiography (TOE) probe requires high-level disinfection or sterilisation due to mucosal contact.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. TOE probes must be disinfected according to BSE or local guidelines."
+      },
+      {
+        text: "8. The Saline Test or 'Bubble Study' must use sterile normal saline and follow standard infection controls.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Sterile technique and correct disposal are essential for patient safety."
+      },
+      {
+        text: "9. Harmonic imaging uses two separate transducers: one to transmit fundamental frequency and one to receive harmonic frequencies.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Modern systems use the same transducer crystals with dedicated harmonic receive paths."
+      },
+      {
+        text: "10. The 'reject' or 'threshold' control removes strong echoes while keeping weak echoes visible.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Reject discards low-level signals/noise, which can remove some weak echoes if set too high."
+      },
+      {
+        text: "11. The default mechanical index in adult echocardiography rarely exceeds 1.9 under normal scanning conditions.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. System safeguards typically limit MI to reduce cavitation risks."
+      },
+      {
+        text: "12. Time Gain Compensation (TGC) only affects the transmitted pulse amplitude.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. TGC adjusts received signals at different depths, not the transmitted pulse."
+      },
+      {
+        text: "13. 2D strain or Speckle Tracking Echocardiography (STE) requires adequate frame rates for accuracy.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Lower frame rates can degrade speckle tracking results."
+      },
+      {
+        text: "14. Lowering output power can reduce the risk of thermal or mechanical bioeffects.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Output power is directly tied to intensity delivered to tissues."
+      },
+      {
+        text: "15. Transducer face delamination is a minor issue and can be ignored if images are still visualised.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Damaged transducer surfaces can affect image quality and pose infection or electrical hazards."
+      },
+      {
+        text: "16. The system's 'focus' control electronically focuses the ultrasound beam at one or more depths.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This improves lateral resolution at the chosen focal zone(s)."
+      },
+      {
+        text: "17. Sterile coupling gel is mandatory for transthoracic echocardiography to comply with BSE guidelines.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Sterile gel is typically used for invasive or sterile fields; standard TTE uses non-sterile gel."
+      },
+      {
+        text: "18. TO convert from fundamental to harmonic imaging, new hardware transducers are always required.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Many modern systems and transducers can switch between modes without special hardware."
+      },
+      {
+        text: "19. Tissue Doppler Imaging (TDI) instrumentation uses lower wall filters and different gain settings to capture myocardium velocities.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. TDI is optimized for low velocity, high amplitude signals from the heart walls."
+      },
+      {
+        text: "20. Contrast echocardiography using microbubble agents can improve endocardial border definition and detect shunts.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Contrast agents enhance LV border detection and can reveal intracardiac shunts."
+      },
+      {
+        text: "21. The mechanical probe used in older systems physically rotates or wobbles the crystal to sweep the beam.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is an older form of scanning before phased array electronics dominated."
+      },
+      {
+        text: "22. In BSE practice, a single universal transducer can produce high-quality imaging for all patient sizes without frequency adjustments.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Different probes or adjustable frequencies are used for varying body habitus and penetration needs."
+      },
+      {
+        text: "23. The acronym TOE stands for Transoesophageal Echocardiography in British English (Transesophageal in American usage).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. BSE commonly uses TOE (Transoesophageal)."
+      },
+      {
+        text: "24. System presets are universal across all manufacturers and require no custom adjustments per patient.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Each system and patient scenario often needs tailored settings."
+      },
+      {
+        text: "25. Tissue harmonics help reduce near-field clutter by transmitting at frequency f and receiving at 2f.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Harmonic energy arises due to non-linear propagation in tissue."
+      },
+      {
+        text: "26. Instruments must have routine quality assurance checks, including uniformity and depth calibration, to meet BSE standards.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Regular QA ensures consistent performance and safety."
+      },
+      {
+        text: "27. Lowering reject or threshold will remove more high-level signals from the displayed image.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Lowering reject primarily allows weak signals to be displayed, not strong ones."
+      },
+      {
+        text: "28. System 'dynamic range' compression has no effect on the displayed contrast of the image.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Reducing dynamic range can make the image appear more contrasty by reducing grey shades."
+      },
+      {
+        text: "29. Output power and transmit gain describe the same control on modern machines.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Output power changes the energy into the patient; gain modifies received echo amplification."
+      },
+      {
+        text: "30. The British Society of Echocardiography recommends comprehensive cleaning of the probe, including cables, to reduce contamination risk.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Full wipe-down includes all surfaces that can contact patients or staff."
+      },
+      {
+        text: "31. Log compression curves can enhance mid-level echoes while suppressing both extremes of echo amplitudes.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This helps display a useful range of echo intensities."
+      },
+      {
+        text: "32. Radiation exposure is a significant concern in diagnostic ultrasound, requiring lead aprons.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Ultrasound is non-ionising, so radiation PPE is not required, though thermal and mechanical concerns remain."
+      },
+      {
+        text: "33. Hand-agitated saline contrast is used for bubble studies to detect intracardiac shunts, following infection control measures.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. It can reveal right-to-left or left-to-right shunts if technique is correct."
+      },
+      {
+        text: "34. Sterile transducer covers are essential for standard transthoracic studies in non-sterile environments.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Usually no sterile cover is required for standard TTE outside of an aseptic field."
+      },
+      {
+        text: "35. The high-level disinfection process for a TOE probe typically involves immersion in an appropriate solution for a validated time.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is crucial to prevent cross-infection between patients."
+      },
+      {
+        text: "36. Mechanical transducers used in older systems never required calibration or checks due to their simplicity.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. All transducers and systems require periodic QA to confirm performance."
+      },
+      {
+        text: "37. Tissue Doppler Imaging can be overloaded if overall gain is set too high, losing velocity detail.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Over-gain can saturate the signals and obscure velocity measurements."
+      },
+      {
+        text: "38. Very long exam times at high output power can potentially increase tissue heating beyond negligible levels.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Prolonged scanning with high power might raise tissue temperature, though rare in normal use."
+      },
+      {
+        text: "39. There is no upper limit for mechanical index (MI) in diagnostic echocardiography machines.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Machines have regulatory limits, typically MI ≤ 1.9 for general diagnostic use."
+      },
+      {
+        text: "40. Using 'power Doppler' mode for myocardial imaging is standard for diastolic evaluation in BSE guidelines.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Tissue Doppler or standard PW is recommended for diastolic function, not power Doppler."
+      },
+      {
+        text: "41. Harmonic imaging can help detect endocardial borders more clearly in patients with poor acoustic windows.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Harmonics often improve clarity in difficult scanning conditions."
+      },
+      {
+        text: "42. Intracardiac echocardiography (ICE) is identical to TOE in terms of procedure and instrumentation.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. ICE uses a catheter-based probe inside the heart chambers, different from oesophageal approach."
+      },
+      {
+        text: "43. System presets typically include harmonics on by default for adult cardiac imaging in many modern machines.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Many echo systems default to tissue harmonic imaging to improve image quality."
+      },
+      {
+        text: "44. The infection risk from standard ultrasound gel is zero and requires no considerations.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Gel can harbour bacteria if contaminated; single-use gel packs and proper storage are recommended."
+      },
+      {
+        text: "45. TOE requires local guidelines for sedation or anaesthesia, plus monitoring during the procedure.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. BSE guidelines recommend sedation protocols and patient monitoring."
+      },
+      {
+        text: "46. The scanning angle or sector width has no effect on the frame rate in 2D imaging.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Wider sector angles require more lines per frame, thus reducing frame rate."
+      },
+      {
+        text: "47. M-mode is rarely used in modern echocardiography according to the BSE.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. M-mode is still recommended for certain precise measurements (e.g. aortic valve, LV motion)."
+      },
+      {
+        text: "48. Lower mechanical index is preferred for contrast echocardiography to avoid early microbubble destruction.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Too high MI can destroy contrast microbubbles quickly."
+      },
+      {
+        text: "49. Disinfecting the ultrasound cable is unnecessary if the probe itself is sterilised.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. The entire assembly should be decontaminated, including cables that may contact the patient or surfaces."
+      },
+      {
+        text: "50. The British Society of Echocardiography advocates ensuring minimal exposure times and power outputs consistent with diagnostic needs.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This aligns with ALARA principles to maintain patient safety."
+      }
+    ]
+  },
+
+  'Set4': {
+    title: "Set 4: Chambers & Valves",
+    questions: [
+      // 50 questions referencing BSE guidelines on chambers, valves, normal values, pathologies, etc.
+      {
+        text: "1. The left ventricle internal dimension in diastole (LVIDd) for adult males is normally 37–56 mm in BSE guidance.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is consistent with BSE normal ranges."
+      },
+      {
+        text: "2. Left atrial volume index < 34 mL/m² is considered normal for both sexes per BSE.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This threshold is widely accepted in guidelines."
+      },
+      {
+        text: "3. M-mode measurement of LVID is highly accurate even in the presence of significant regional wall motion abnormalities.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Off-axis or RWMA can render M-mode measurements inaccurate."
+      },
+      {
+        text: "4. Simpson’s biplane method is a BSE-recommended technique for measuring left ventricle volumes and ejection fraction.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. It reduces geometric assumptions compared to single-plane or M-mode methods."
+      },
+      {
+        text: "5. Right ventricle (RV) basal diameter > 41 mm indicates RV dilation according to BSE reference limits.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. BSE guidelines note a normal upper limit around 41 mm in the RV-focused view."
+      },
+      {
+        text: "6. The continuity equation for aortic valve area requires stroke volume from LVOT diameter and velocity, divided by the velocity across the aortic valve.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is standard continuity approach for calculating AVA in aortic stenosis."
+      },
+      {
+        text: "7. Mitral stenosis severity classification by BSE uses parameters like mean gradient, valve area (planimetry), and pressure half-time only.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Additional factors, such as pulmonary pressure and valve morphology, also guide severity assessment."
+      },
+      {
+        text: "8. An EROA (Effective Regurgitant Orifice Area) > 0.4 cm² typically indicates severe mitral regurgitation in BSE classification.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. EROA threshold of 0.4 cm² is a common cut-off for severe MR."
+      },
+      {
+        text: "9. Peak gradient in aortic stenosis is derived from 4 × (peak velocity)² using the simplified Bernoulli equation.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is standard in valvular assessment using Doppler."
+      },
+      {
+        text: "10. Bicuspid aortic valve is not a recognised congenital anomaly in the BSE guidelines.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Bicuspid aortic valve is the most common congenital cardiac anomaly noted in guidelines."
+      },
+      // ... continue to 50 ...
+      {
+        text: "11. A dimensionless index (DI) < 0.25 can suggest severe aortic stenosis in BSE guidelines.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. DI = LVOT VTI / Aortic VTI, and <0.25 is consistent with severe AS."
+      },
+      {
+        text: "12. Normal pulmonary valve flow rarely exceeds 1 m/s in velocity in healthy adults.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Pulmonary peak velocity >1 m/s may suggest pathology or flow changes."
+      },
+      {
+        text: "13. In rheumatic mitral stenosis, leaflet tips are typically calcified with minimal subvalvular involvement.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Rheumatic MS usually exhibits fusion at the leaflet tips and subvalvular thickening."
+      },
+      {
+        text: "14. Regurgitant volume (RVol) > 60 mL/beat often indicates severe mitral regurgitation.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is another quantitation threshold for severe MR."
+      },
+      {
+        text: "15. Tricuspid annular plane systolic excursion (TAPSE) < 17 mm suggests reduced right ventricular systolic function.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. BSE uses 17 mm as a cut-off for abnormal RV function."
+      },
+      {
+        text: "16. The left atrium (LA) is the most posterior chamber of the heart and often the easiest to measure in M-mode.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. It's indeed posterior, but LA volume is better assessed in 2D or 3D rather than M-mode alone."
+      },
+      {
+        text: "17. The normal tricuspid valve inflow E velocity can be higher than mitral inflow E velocity under normal conditions.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Typically, mitral inflow velocities are higher than tricuspid inflow in normal physiology."
+      },
+      {
+        text: "18. A vena contracta width ≥ 0.7 cm is consistent with severe mitral regurgitation.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. BSE uses 0.7 cm as a cut-off for severe MR vena contracta width."
+      },
+      {
+        text: "19. The subcostal four-chamber view can be used to assess the interatrial septum for patency using colour Doppler.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This view is often used to detect atrial septal defects or PFO with a bubble study."
+      },
+      {
+        text: "20. In severe aortic stenosis, a peak velocity > 4.0 m/s is typically found.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Peak velocities above 4.0 m/s indicate significant AS severity."
+      },
+      {
+        text: "21. The continuity equation is invalid in the presence of significant aortic regurgitation.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. It can still be used, though caution is needed if regurgitation alters stroke volume assumptions."
+      },
+      {
+        text: "22. The right ventricle free wall thickness is normally < 5 mm in adult echocardiography.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Thicker walls suggest RV hypertrophy from pressure overload or disease."
+      },
+      {
+        text: "23. Pulmonary regurgitation severity can be assessed by diastolic flow reversal in the pulmonary artery and the pressure half-time of the regurgitant jet.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. These are standard methods for grading PR severity."
+      },
+      {
+        text: "24. The left ventricle outflow tract (LVOT) diameter measurement is typically made in systole at the base of the aortic valve leaflets.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. It’s usually measured in mid-systole, but at the annular level (hinge points) just proximal to the valve."
+      },
+      {
+        text: "25. A bicuspid aortic valve often shows an 'eccentric' closure line in the short-axis view.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Bicuspid valves can have eccentric opening or thickened raphe."
+      },
+      {
+        text: "26. The vena contracta for aortic regurgitation is typically measured in diastole at the level of regurgitant orifice within the aortic root.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This helps quantify AR severity."
+      },
+      {
+        text: "27. A normal mitral valve area is around 2.0–2.5 cm², while severe mitral stenosis is typically <1.0 cm².",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is a typical classification for MS severity."
+      },
+      {
+        text: "28. BSE guidelines define normal ejection fraction (EF) as ≥55%.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. 55% and above is generally considered normal by BSE criteria."
+      },
+      {
+        text: "29. Pulmonary artery systolic pressure (PASP) can be estimated from tricuspid regurgitation jet velocity plus right atrial pressure estimate.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. TR velocity is used in Bernoulli, then RA pressure is added."
+      },
+      {
+        text: "30. The right atrium (RA) typically has a lower volume than the left atrium (LA).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. LA volumes are usually larger in normal adults, though RA can dilate in certain conditions."
+      },
+      {
+        text: "31. If the E wave velocity is significantly higher than the A wave velocity in mitral inflow, this always indicates normal diastolic function.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Some diastolic dysfunction patterns present with pseudonormal or restrictive filling."
+      },
+      {
+        text: "32. In the presence of eccentric mitral regurgitation, the jet may be underestimated if it clings to the left atrial wall (Coanda effect).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. The Coanda effect can make jets appear smaller in the LA."
+      },
+      {
+        text: "33. Significant tricuspid regurgitation often leads to hepatic vein systolic flow reversal.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is a marker for severe TR."
+      },
+      {
+        text: "34. Hypertrophic obstructive cardiomyopathy (HOCM) typically shows a mid-cavity obstruction, never subaortic.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. HOCM is often subaortic with systolic anterior motion (SAM) of the mitral valve."
+      },
+      {
+        text: "35. The recommended view for measuring the LVOT diameter is the parasternal long-axis view, zoomed, in mid-systole.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This ensures accurate measurement at the annular level."
+      },
+      {
+        text: "36. Mean gradient across the aortic valve is always lower than the peak gradient derived from Bernoulli.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. The mean gradient is the time-average; the peak is the highest instantaneous gradient."
+      },
+      {
+        text: "37. Aortic sclerosis means thickening of the aortic valve leaflets with no significant increase in velocity (<2.5 m/s).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Sclerosis can precede stenosis but not always associated with high velocities."
+      },
+      {
+        text: "38. Right Ventricular Fractional Area Change (RV FAC) <35% suggests normal RV systolic function.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. FAC <35% indicates impaired RV function; normal is >35%."
+      },
+      {
+        text: "39. The subcostal view is often useful for assessing the inferior vena cava (IVC) for collapsibility and right atrial pressure estimation.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This view is standard for IVC dimension and respiratory variation."
+      },
+      {
+        text: "40. In severe pulmonary regurgitation, diastolic flow reversal may be seen in the pulmonary artery and sometimes in branch pulmonary arteries.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Holodiastolic reversal is a sign of significant PR."
+      },
+      {
+        text: "41. A dilated left ventricle with thinning walls and EF <35% always indicates ischaemic cardiomyopathy.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Could be dilated cardiomyopathy of various aetiologies, not necessarily ischaemic."
+      },
+      {
+        text: "42. In rheumatic mitral stenosis, the 'hockey-stick' or 'doming' appearance of the anterior mitral leaflet is characteristic.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is a classic rheumatic feature."
+      },
+      {
+        text: "43. The presence of vegetation on a valve cusp is best diagnosed using 2D or 3D transoesophageal echocardiography (TOE) in uncertain cases.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. TOE is more sensitive for small vegetations than transthoracic imaging."
+      },
+      {
+        text: "44. A 'paradoxical' septal motion is always diagnostic of constrictive pericarditis.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. It may appear in multiple conditions (e.g. LBBB, post-surgery)."
+      },
+      {
+        text: "45. In BSE guidelines, an LA dimension measured in M-mode at end-systole is considered the gold standard for left atrial size.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. LA volume index using 2D or 3D is recommended for more accurate assessment."
+      },
+      {
+        text: "46. 'Seagull sign' in spectral Doppler can appear in certain valvular pathologies such as mitral regurgitation jets near the annulus.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This descriptive term is sometimes used for specific waveforms."
+      },
+      {
+        text: "47. Aortic regurgitation severity can be graded by jet width in the LVOT, vena contracta, diastolic flow reversal in the descending aorta, and regurgitant volume.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. BSE encourages a multiparametric approach."
+      },
+      {
+        text: "48. An aortic root diameter >40 mm in men is always considered aortic aneurysm by BSE guidelines.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Aortic dimensions depend on BSA and guidelines. >40 mm is 'dilated,' but aneurysm definitions vary."
+      },
+      {
+        text: "49. Tricuspid annular dilatation >21 mm from the four-chamber view indicates significant annular enlargement.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. BSE sees >21 mm at end-diastole as a sign of dilation."
+      },
+      {
+        text: "50. Mitral valve prolapse is identified when any part of the mitral leaflet(s) displaces >2 mm beyond the long-axis annular line in systole.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is a typical criterion for MVP in BSE guidelines."
+      }
+    ]
+  },
+
+  'Set5': {
+    title: "Set 5: Cardiomyopathies & Others",
+    questions: [
+      // 50 questions referencing dilated, hypertrophic, restrictive, other pathologies, plus lumps & bumps, pericardial etc.
+      {
+        text: "1. Dilated cardiomyopathy is characterised by increased left ventricular end-diastolic volume and reduced systolic function (ejection fraction).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is the hallmark of DCM."
+      },
+      {
+        text: "2. Hypertrophic cardiomyopathy (HCM) always spares the interventricular septum from thickening.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. HCM often involves septal thickening more than free walls."
+      },
+      {
+        text: "3. Restrictive cardiomyopathy often presents with biatrial enlargement and normal or near-normal ventricular wall thickness.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Elevated filling pressures lead to atrial dilation in RCM."
+      },
+      {
+        text: "4. A 'spade-like' configuration of the left ventricle apex can be seen in apical hypertrophic cardiomyopathy.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is a classic sign of apical HCM."
+      },
+      {
+        text: "5. In arrhythmogenic right ventricular cardiomyopathy (ARVC), there is fibrofatty replacement of the LV anterolateral wall.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. ARVC primarily affects the right ventricle, not typically LV anterolateral segments."
+      },
+      {
+        text: "6. Non-compaction of the left ventricle is diagnosed when prominent trabeculations and deep recesses have a ratio > 2:1 in diastole.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This ratio is often cited in diagnosing LV non-compaction."
+      },
+      {
+        text: "7. Pericardial effusion located posterior to the descending thoracic aorta in the parasternal long-axis view is likely a pleural effusion.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Fluid posterior to the descending aorta is usually pleural, but an effusion anterior to it suggests pericardial fluid."
+      },
+      {
+        text: "8. Constrictive pericarditis can show septal bounce, respiratory variation in ventricular filling, and a prominent E velocity with rapid early diastolic halt.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. These are typical echo findings in constriction."
+      },
+      {
+        text: "9. Tamponade physiology often includes right ventricular diastolic collapse and exaggerated respiratory variations in transvalvular flows.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Tamponade can have these classic signs on echo."
+      },
+      {
+        text: "10. Left ventricular hypertrophy always indicates hypertrophic cardiomyopathy.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Hypertension and aortic stenosis can also cause LV hypertrophy."
+      },
+      // ... continuing to 50 ...
+      {
+        text: "11. Amyloid heart disease can present with thickened ventricular walls and a 'sparkling' granular appearance on 2D imaging.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is a classic echo descriptor of cardiac amyloidosis."
+      },
+      {
+        text: "12. Fabry disease can show concentric LV thickening, but Tissue Doppler may reveal abnormally low myocardial velocities.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is sometimes helpful in differentiating from hypertensive LVH."
+      },
+      {
+        text: "13. Systolic anterior motion (SAM) of the mitral valve in HOCM can cause a dynamic outflow obstruction and mitral regurgitation.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. SAM is a primary mechanism in obstructive HCM."
+      },
+      {
+        text: "14. Thrombus formation in the left ventricle apex is common in hyperdynamic states like HOCM.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Thrombus more often forms in regions of low flow, such as dilated cardiomyopathy or akinetic segments post-infarction."
+      },
+      {
+        text: "15. A myxoma is the most common primary benign cardiac tumour, often found in the left atrium.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Most myxomas occur in the LA attached to the interatrial septum."
+      },
+      {
+        text: "16. In myocarditis, echo can show normal LV size and function, but it may be abnormal if severe inflammation occurs.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Myocarditis ranges from mild changes to severe dysfunction."
+      },
+      {
+        text: "17. Echocardiography is the gold standard to differentiate constrictive pericarditis from restrictive cardiomyopathy.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Echo is critical, but sometimes cardiac MRI or invasive haemodynamics are required for definitive distinction."
+      },
+      {
+        text: "18. The E/e’ ratio is irrelevant in restrictive cardiomyopathy assessment.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. It can indicate raised filling pressures in RCM as well."
+      },
+      {
+        text: "19. A 'bright' and thickened interatrial septum might be seen in patients with atrial infiltration disorders like amyloidosis.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Amyloid can affect atria as well, leading to a 'sparkling' appearance."
+      },
+      {
+        text: "20. In pericardial effusions, echo-free space is typically anterior to the descending aorta in the parasternal long-axis view.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This helps differentiate it from pleural effusions (which appear posterior)."
+      },
+      {
+        text: "21. Echocardiographic contrast can help differentiate an LV apical aneurysm from an apical thrombus by enhancing endocardial definition.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Contrast can clarify the presence or absence of a thrombus in an aneurysmal region."
+      },
+      {
+        text: "22. Eisenmenger syndrome is the reversal of a left-to-right shunt into a right-to-left shunt due to elevated pulmonary pressures.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Over time, pulmonary hypertension can cause shunt reversal."
+      },
+      {
+        text: "23. Pulmonary hypertension can lead to right ventricular hypertrophy and dilation, with interventricular septal flattening (D-shaped LV).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Echo often shows these findings in significant pulmonary hypertension."
+      },
+      {
+        text: "24. Restrictive cardiomyopathy is commonly caused by hypertension.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Hypertension leads primarily to LV hypertrophy; RCM is often due to infiltration or endomyocardial fibrosis."
+      },
+      {
+        text: "25. Non-ischaemic dilated cardiomyopathy can show global hypokinesis rather than regionally distinct wall motion abnormalities.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. DCM usually presents with diffuse dysfunction."
+      },
+      {
+        text: "26. A large lipomatous hypertrophy of the interatrial septum spares the fossa ovalis, producing a dumbbell shape.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is a known echocardiographic appearance of lipomatous septal thickening."
+      },
+      {
+        text: "27. In hypertrophic cardiomyopathy, dynamic obstruction can be provoked by manoeuvres that decrease preload (like Valsalva).",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Reduced LV cavity size intensifies outflow tract gradients."
+      },
+      {
+        text: "28. Apical ballooning syndrome (Takotsubo cardiomyopathy) always has coronary artery stenosis matching the wall motion abnormality.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Takotsubo typically shows normal coronary arteries with apical or mid-ventricular ballooning."
+      },
+      {
+        text: "29. Some forms of restrictive cardiomyopathy, such as amyloidosis, can have 'sparkling' myocardium and thickened valves on 2D echo.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Amyloid infiltration commonly thickens multiple structures."
+      },
+      {
+        text: "30. Intracardiac masses such as myxomas can move across valves and cause obstruction mimicking stenosis.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. A pedunculated LA myxoma can prolapse into the mitral orifice intermittently."
+      },
+      {
+        text: "31. Chagas disease (not common in the UK) can lead to dilated cardiomyopathy with apical aneurysm formation.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Chagas cardiomyopathy is a known global cause of DCM with apical involvement."
+      },
+      {
+        text: "32. Arrhythmogenic right ventricular cardiomyopathy only affects the atria.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. ARVC primarily affects the right ventricle with fibro-fatty replacement."
+      },
+      {
+        text: "33. In Takotsubo cardiomyopathy, the basal segments are hyperdynamic while the apex is akinetic or dyskinetic.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. The 'apical ballooning' pattern spares basal segments."
+      },
+      {
+        text: "34. LV non-compaction is diagnosed by a ratio of non-compacted to compacted layer >2:1 in diastole, usually in the lateral or apical walls.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This is the standard echocardiographic criterion."
+      },
+      {
+        text: "35. A bright 'speckled' myocardium is highly specific to amyloidosis and cannot appear in hypertrophic cardiomyopathy.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. While typical in amyloid, non-specific increased echogenicity can appear in other conditions too."
+      },
+      {
+        text: "36. In pericardial constriction, echocardiography may show a 'septal bounce' and significant respiratory variation in mitral inflow velocities.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. These are typical echo findings for constrictive physiology."
+      },
+      {
+        text: "37. Intracardiac thrombus is best confirmed by contrast echocardiography or TOE if the transthoracic images are suboptimal.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Contrast or TOE can better delineate a suspected mass vs. artifact."
+      },
+      {
+        text: "38. Restrictive cardiomyopathy and constrictive pericarditis have identical haemodynamic findings and cannot be distinguished by echocardiography.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Tissue Doppler, respiratory septal shift, and 2D findings can help differentiate them, though sometimes invasive tests are needed."
+      },
+      {
+        text: "39. Vegetations on the mitral valve in infective endocarditis can appear on either the atrial or the ventricular side of the leaflets.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Though typically on the flow side, endocarditis can affect either leaflet surface."
+      },
+      {
+        text: "40. Chronic severe rheumatic mitral regurgitation often leads to restricted posterior leaflet motion.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Rheumatic changes can fuse or thicken chordae, often more on the posterior leaflet."
+      },
+      {
+        text: "41. Epicardial fat may appear as an echo-free space mistaken for pericardial fluid without careful observation.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Epicardial fat can mimic a small anterior effusion."
+      },
+      {
+        text: "42. Dilated cardiomyopathy from alcohol misuse is usually localised to the septum and spares the lateral walls.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Alcoholic DCM typically involves global LV dilation and dysfunction."
+      },
+      {
+        text: "43. Ventricular septal defect (VSD) post-infarction can cause acute left-to-right shunt and cardiogenic shock, seen on echo.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Echo can detect the septal rupture and associated shunt flow."
+      },
+      {
+        text: "44. In hypertrophic obstructive cardiomyopathy, the outflow obstruction is fixed and does not vary with preload or afterload changes.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. The gradient is dynamic and depends on volume status and contractility."
+      },
+      {
+        text: "45. Thickened, bright valves are a hallmark of rheumatic heart disease only.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Valve thickening can also occur in calcific or degenerative changes, not exclusively rheumatic."
+      },
+      {
+        text: "46. Athletes’ hearts can exhibit increased LV cavity dimension and wall thickness, but generally preserve normal diastolic function and no outflow obstruction.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. 'Athlete’s heart' is physiological adaptation without pathological gradients."
+      },
+      {
+        text: "47. Tamponade physiology is suspected when there is right atrial or right ventricular free wall collapse in diastole.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. This, along with exaggerated respiratory variation, supports tamponade diagnosis."
+      },
+      {
+        text: "48. Sarcoidosis can involve the myocardium and present as dilated or restrictive physiology with segmental wall motion abnormalities.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Cardiac sarcoid can mimic various cardiomyopathy patterns."
+      },
+      {
+        text: "49. In advanced amyloidosis, low voltage on ECG but thick LV walls on echo is a recognised pattern.",
+        correctAnswer: "T",
+        userAnswer: null,
+        explanation: "True. Discrepancy between ECG and echo findings is classic for amyloid infiltration."
+      },
+      {
+        text: "50. Ebstein’s anomaly is a purely left heart condition affecting the mitral valve.",
+        correctAnswer: "F",
+        userAnswer: null,
+        explanation: "False. Ebstein’s anomaly involves apical displacement of the tricuspid valve on the right side of the heart."
+      }
+    ]
+  }
+};
+// Score totals
+let totalAnswered = 0;
+let totalCorrect = 0;
+
+// Which set is active, which question index
+let currentSetKey = null;
+let currentQIndex = 0;
+let isQuestionSubmitted = false; // track if user has submitted for current Q
+
+/***********************************************************************
+ * LANDING, PAYMENT & LOGIN
+ ***********************************************************************/
+
+function gotoPayScreen() {
+  document.getElementById('landingScreen').classList.add('hidden');
+  document.getElementById('payScreen').classList.remove('hidden');
+}
+
+function mockApplePay() {
+  submitOrder('Apple Pay');
+}
+function mockPayPal() {
+  submitOrder('PayPal');
+}
+
+/** submitOrder(paymentMethod): gather user info, generate user ID, password, set isSubscribed=true, go to login */
+function submitOrder(paymentMethod) {
+  const name = document.getElementById('fullName').value.trim();
+  const dob = document.getElementById('dob').value;
+  const phone = document.getElementById('phone').value.trim();
+  const track = document.getElementById('professionTrack').value;
+  const email = document.getElementById('email').value.trim();
+  if(!name || !dob || !phone || !email) {
+    alert("Please fill all details.");
+    return;
+  }
+  // For demonstration, create user ID from name and random number
+  userID = name.split(' ')[0].toLowerCase() + Math.floor(Math.random()*1000).toString();
+  userPassword = Math.random().toString(36).slice(-8); // random 8-char
+  isSubscribed = true;
+  // store data
+  storedName = name;
+  storedDob = dob;
+  storedPhone = phone;
+  storedProfession = track;
+  storedEmail = email;
+
+  alert(`Payment via ${paymentMethod} success (demo). Your new user ID: ${userID}, password: ${userPassword}`);
+
+  // navigate to login screen
+  document.getElementById('payScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+function gotoLogin() {
+  // from landing
+  document.getElementById('landingScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+function login() {
+  if(!isSubscribed) {
+    alert("No subscription found. Please subscribe first.");
+    return;
+  }
+  const uidInput = document.getElementById('loginUserID').value.trim();
+  const passInput = document.getElementById('loginPassword').value.trim();
+  if(uidInput === userID && passInput === userPassword) {
+    isLoggedIn = true;
+    document.getElementById('loginScreen').classList.add('hidden');
+    showMenu();
+    initScoreboard();
+  } else {
+    alert("Invalid user ID / password.");
+  }
+}
+
+function forgotCredentials() {
+  // In real app, you'd do password reset flow
+  alert(`Demo: Your user ID is ${userID}, password is ${userPassword}.`);
+}
+
+/***********************************************************************
+ * MAIN MENU
+ ***********************************************************************/
+
+function showMenu() {
+  document.getElementById('menuScreen').classList.remove('hidden');
+  buildSetsList();
+  updateScoreboard();
+}
+
+/** buildSetsList(): create vertical list of sets with progress bars */
+function buildSetsList() {
+  const container = document.getElementById('setsList');
+  container.innerHTML = '';
+  for(let skey in setsData) {
+    const setObj = setsData[skey];
+    const completedInfo = calcSetProgress(skey); 
+    const barPct = completedInfo.answered ? (completedInfo.correct / completedInfo.answered)*100 : 0;
+    const totalQ = setObj.questions.length;
+
+    // create row
+    const row = document.createElement('div');
+    row.style.marginBottom = '15px';
+
+    // heading
+    const titleLink = document.createElement('button');
+    titleLink.className = 'link-btn';
+    titleLink.style.display = 'block';
+    titleLink.style.width = '100%';
+    titleLink.innerText = `${setObj.title} (${completedInfo.answered}/${totalQ} answered)`;
+    titleLink.onclick = ()=>openSet(skey);
+    row.appendChild(titleLink);
+
+    // progress bar
+    const pBar = document.createElement('div');
+    pBar.className = 'progress-bar';
+    const pBarFill = document.createElement('div');
+    pBarFill.className = 'progress-bar-fill';
+    pBarFill.style.width = (completedInfo.answered / totalQ *100) + '%';
+    pBar.appendChild(pBarFill);
+    row.appendChild(pBar);
+
+    container.appendChild(row);
+  }
+}
+
+function calcSetProgress(skey) {
+  let answered=0, correct=0;
+  const qArr = setsData[skey].questions;
+  for(let q of qArr) {
+    if(q.userAnswer !== null) {
+      answered++;
+      if(q.userAnswer === q.correctAnswer) {
+        correct++;
+      }
+    }
+  }
+  return {answered, correct};
+}
+
+function resetProgress() {
+  const ok = confirm("Really reset all progress?");
+  if(!ok) return;
+  // wipe userAnswers
+  for(let skey in setsData) {
+    for(let q of setsData[skey].questions) {
+      q.userAnswer=null;
+    }
+  }
+  totalAnswered=0;
+  totalCorrect=0;
+  updateScoreboard();
+  buildSetsList();
+  alert("All progress reset.");
+}
+
+/***********************************************************************
+ * QUIZ NAVIGATION
+ ***********************************************************************/
+
+function openSet(setKey) {
+  document.getElementById('menuScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  currentSetKey = setKey;
+  currentQIndex = 0;
+  isQuestionSubmitted = false;
+  document.getElementById('quizTitle').textContent = setsData[setKey].title;
+  loadQuestion();
+  updateScoreboard();
+}
+
+function exitToMenu() {
+  document.getElementById('quizScreen').classList.add('hidden');
+  document.getElementById('menuScreen').classList.remove('hidden');
+  buildSetsList();
+  updateScoreboard();
+}
+
+/** loadQuestion() - show question text, track if user had answered. If so, show result. */
+function loadQuestion() {
+  const setObj = setsData[currentSetKey];
+  const qObj = setObj.questions[currentQIndex];
+  const container = document.getElementById('questionBox');
+  container.innerHTML = `
+    <h3>Question ${currentQIndex+1} of ${setObj.questions.length}</h3>
+    <p style="font-weight:bold;">${qObj.text}</p>
+    <div>
+      <label><input type="radio" name="qRadio" value="T"> True</label>
+      <label><input type="radio" name="qRadio" value="F"> False</label>
+    </div>
+    <div style="margin-top:10px;">
+      <button onclick="submitAnswer()">Submit</button>
+    </div>
+    <div class="score-info" id="qFeedback"></div>
+  `;
+
+  // hide 'Next' button until user submits
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('prevBtn').disabled = false;
+  if(currentQIndex===0) {
+    document.getElementById('prevBtn').disabled=true;
+  }
+
+  // pre-check if userAnswer isn't null => show it, show result
+  if(qObj.userAnswer !== null) {
+    // user previously answered
+    const radios = document.getElementsByName('qRadio');
+    for(let i=0; i<radios.length; i++){
+      if(radios[i].value === qObj.userAnswer) {
+        radios[i].checked = true;
+      }
+    }
+    // show result
+    showQuestionResult();
+    // let them move on
+    document.getElementById('nextBtn').disabled=false;
+  }
+}
+
+/** submitAnswer(): evaluate user's chosen T/F, update scoreboard, show result */
+function submitAnswer() {
+  const setObj = setsData[currentSetKey];
+  const qObj = setObj.questions[currentQIndex];
+  const radios = document.getElementsByName('qRadio');
+  let selVal=null;
+  for(let i=0; i<radios.length; i++){
+    if(radios[i].checked) {
+      selVal = radios[i].value;
+      break;
+    }
+  }
+  if(selVal===null){
+    alert("Please select True or False first.");
+    return;
+  }
+  // If user had no prior answer
+  if(qObj.userAnswer===null) {
+    // new answer
+    totalAnswered++;
+    if(selVal===qObj.correctAnswer) totalCorrect++;
+  } else {
+    // user changing an answer
+    if(qObj.userAnswer!==selVal) {
+      let wasCorrect=(qObj.userAnswer===qObj.correctAnswer);
+      let isNowCorrect=(selVal===qObj.correctAnswer);
+      if(wasCorrect && !isNowCorrect) totalCorrect--;
+      if(!wasCorrect && isNowCorrect) totalCorrect++;
+    }
+  }
+  qObj.userAnswer=selVal;
+  // show result
+  showQuestionResult();
+  // enable Next
+  document.getElementById('nextBtn').disabled=false;
+  updateScoreboard();
+}
+
+/** showQuestionResult() - reveals explanation if correct or not */
+function showQuestionResult() {
+  const setObj = setsData[currentSetKey];
+  const qObj = setObj.questions[currentQIndex];
+  const feedback = document.getElementById('qFeedback');
+  const correct = (qObj.userAnswer===qObj.correctAnswer);
+  feedback.style.color = correct?"green":"red";
+  feedback.innerHTML = correct 
+    ? `✔ Correct. ${qObj.explanation}`
+    : `✘ Incorrect. ${qObj.explanation}`;
+}
+
+/** nextQuestion() - move to next after user has submitted */
+function nextQuestion() {
+  if(currentQIndex < setsData[currentSetKey].questions.length-1) {
+    currentQIndex++;
+    loadQuestion();
+  } else {
+    alert("End of set. No more questions.");
+  }
+}
+
+/** prevQuestion() - go to previous Q if index>0 */
+function prevQuestion() {
+  if(currentQIndex>0) {
+    currentQIndex--;
+    loadQuestion();
+  } else {
+    alert("Already at first question.");
+  }
+}
+
+/***********************************************************************
+ * SCOREBOARD
+ ***********************************************************************/
+function initScoreboard() {
+  document.getElementById('scoreboard').classList.remove('hidden');
+  updateScoreboard();
+}
+
+/** updateScoreboard(): show overall and current set progress. */
+function updateScoreboard() {
+  // overall
+  let pctOverall = (totalAnswered===0)?0:(totalCorrect / totalAnswered * 100);
+  document.getElementById('scoreOverall').textContent = `Answered: ${totalAnswered} / ${totalCorrect} correct (${pctOverall.toFixed(1)}%)`;
+  
+  // current set
+  if(currentSetKey) {
+    let setAnswered=0, setCorrect=0;
+    const arr = setsData[currentSetKey].questions;
+    for(let q of arr) {
+      if(q.userAnswer!==null) {
+        setAnswered++;
+        if(q.userAnswer===q.correctAnswer) setCorrect++;
+      }
+    }
+    let setPct = (setAnswered===0)?0:(setCorrect/setAnswered*100);
+    document.getElementById('currentSetLabel').textContent = setsData[currentSetKey].title;
+    document.getElementById('scoreSet').textContent = `${setAnswered} / ${setCorrect} correct (${setPct.toFixed(1)}%)`;
+  } else {
+    document.getElementById('currentSetLabel').textContent = "No current set";
+    document.getElementById('scoreSet').textContent = "0 / 0 correct (0.0%)";
+  }
+}
+</script>
+</body>
+</html>
